@@ -1,15 +1,13 @@
 import streamlit as st
 import pandas as pd
-import pickle
+import joblib
 
-# 1. Load the trained model and scaler artifacts
+# 1. Load the trained model and scaler artifacts using joblib
 try:
-    with open("placement_model.pkl", "rb") as f:
-        model = pickle.load(f)
-    with open("placement_scaler.pkl", "rb") as f:
-        scaler = pickle.load(f)
-except FileNotFoundError:
-    st.error("❌ Missing required pickle files! Please run train.py first.")
+    model = joblib.load("placement_model.pkl")
+    scaler = joblib.load("placement_scaler.pkl")
+except Exception as e:
+    st.error("❌ Error loading model files. Make sure placement_model.pkl and placement_scaler.pkl exist!")
 
 st.set_page_config(page_title="Placement Prediction", layout="centered")
 
@@ -32,7 +30,7 @@ st.markdown("---")
 
 # 2. When the user clicks the button, organize inputs and scale them
 if st.button("Predict Placement Status", use_container_width=True):
-    # Match the exact feature names used in your train.py line 13
+    # Match the exact feature names used in train.py
     raw_features = pd.DataFrame([{
         'CGPA': cgpa,
         'Internships': internships,
